@@ -1,0 +1,21 @@
+body{
+    background-color: #373434;
+    font-family: 'Roboto', Arial, sans-serif;
+    color: antiquewhite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#intro-screen{
+    background-image: url('images/background.png');
+    padding: 20px;
+}
+
+button{
+    background-color: black;
+    color:antiquewhite;
+    padding: 15px;
+    border-radius: 10px;
+}
+
