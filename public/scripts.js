@@ -9,6 +9,7 @@ function startGame() {
     document.getElementById('game-screen').style.display = 'block';
     board = generateRandomBoard();
     console.log(board);
+    drawBoard(board);
 }
 
 function generateRandomBoard(){
@@ -32,9 +33,33 @@ function drawBoard(board) {
     // Tämä luo CSS Grid -ruudukon, jossa on BOARD_SIZE saraketta. 
     // Jokainen sarake saa saman leveyden (1fr).
     gameBoard.style.gridTemplateColumns = `repeat(${BOARD_SIZE}, 1fr)`;
+
+    // Luodaan jokainen ruutu
+    for (let y = 0; y < BOARD_SIZE; y++) {
+        for (let x = 0; x < BOARD_SIZE; x++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+
+            if (getCell(board, x, y) === 'W') {
+                cell.classList.add('wall'); // 'W' on seinä
+            }
+
+            gameBoard.appendChild(cell);
+        }
+        
+    }
 }
 
 
 function getCell(board, x, y) {
     return board[y][x];
+}
+
+function calculateCellSize() {
+    // Otetaan talteen pienempi luku ikkunan leveydestä ja korkeudesta
+    const screenSize = Math.min(window.innerWidth, window.innerHeight);
+    // Tehdään pelilaudasta hieman tätä pienempi, jotta jää pienet reunat
+    const gameBoardSize = 0.95 * screenSize;
+    // Laudan koko jaetaan ruutujen määrällä, jolloin saadaan yhden ruudun koko
+    return gameBoardSize / BOARD_SIZE;
 }

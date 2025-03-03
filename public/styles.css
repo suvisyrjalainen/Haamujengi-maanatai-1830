@@ -21,27 +21,26 @@ button{
 
 #game-screen{
     display: none;
-    background-image: url('images/background.png');
-    width: 40vw;
-    height: 40vw;
 }
 
 #game-board{
+    background-image: url('images/background.png');
+    /*
+    width: 40vw;
+    height: 40vw;
+    */
+    background-size: cover;
     display: grid;
-    gap: 0px;
 }
 
-.cell {
+.cell{
     width: 50px;
     height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 1px solid black;
 }
-  
-.wall {
+
+.wall{
     background-image: url('images/wall.png');
-    width: 50px;
-    height: 50px;
     background-size: cover;
 }
+
