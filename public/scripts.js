@@ -28,6 +28,8 @@ function generateRandomBoard(){
 
    generateObstacles(newBoard);
 
+   newBoard[11][3] = 'P'; //P is player
+
   return newBoard;
 }
 
@@ -46,6 +48,9 @@ function drawBoard(board) {
             cell.style.height = cellSize +"px";
             if (getCell(board, x, y) === 'W') {
                 cell.classList.add('wall'); // 'W' on seinä
+            }
+            else if (getCell(board, x, y) === 'P') {
+                cell.classList.add('player'); // 'W' on seinä
             }
 
             gameBoard.appendChild(cell);
@@ -93,4 +98,9 @@ function placeObstacle(board,obstacle,startX, startY){
         [x,y] = coordinatePair;
         board[startY + y][startX + x] = 'W';
     }
+}
+
+// Returns a random integer between 5 and 10
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
