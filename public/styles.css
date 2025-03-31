@@ -46,3 +46,12 @@ button{
     background-size: cover;
 }
 
+.monster{
+    background-image: url('images/hornmonster.png');
+    background-size: cover;   
+}
+
+.bullet{
+    background-color: red;
+    border-radius: 50%;
+}

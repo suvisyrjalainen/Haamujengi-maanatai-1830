@@ -22,7 +22,12 @@ document.addEventListener('keydown', (event) => {
       case 'ArrowRight':
       pelaaja.move(1, 0); // Liikuta oikealle
       break;
+      case 'w':
+        shootAt(pelaaja.x,pelaaja.y - 1);
+      break;
+
       }
+
      event.preventDefault(); // Prevent default scrolling behaviour
      });
 
@@ -57,6 +62,12 @@ function generateRandomBoard(){
 
    newBoard[pelaaja.y][pelaaja.x] = 'P'; //P is player
 
+   for(let i = 0; i < 5; i++){
+      const[x,y] = randomEmptyPosition(newBoard);
+      newBoard[y][x] = 'G';
+   }
+ 
+
    return newBoard;
 }
 
@@ -81,6 +92,12 @@ function drawBoard(board) {
             }
             else if (getCell(board, x, y) === 'P') {
                 cell.classList.add('player'); // 'W' on seinä
+            }
+            else if (getCell(board,x,y) === 'G'){
+                cell.classList.add('monster');
+            }
+            else if (getCell(board,x,y) === 'B'){
+                cell.classList.add('bullet');
             }
 
             gameBoard.appendChild(cell);
@@ -151,6 +168,11 @@ function randomEmptyPosition(board) {
     } else {
         return randomEmptyPosition(board);
     }
+}
+
+function shootAt(x,y){
+    board[y][x] = 'B';
+    drawBoard(board); 
 }
 
 class Player {
