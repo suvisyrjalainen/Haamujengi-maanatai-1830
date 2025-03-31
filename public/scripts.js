@@ -2,7 +2,29 @@ let BOARD_SIZE = 15; //kentän koko, eli seiniä on 15x15
 let board; //kenttä tallennetaan tähän
 const cellSize = calculateCellSize();
 
+let pelaaja;
+let playerX;
+let playerY;
+
 document.getElementById('start-button').addEventListener('click', startGame);
+
+document.addEventListener('keydown', (event) => {
+    switch (event.key) {
+      case 'ArrowUp':
+      pelaaja.move(0, -1); // Liikuta ylös
+      break;
+      case 'ArrowDown':
+      pelaaja.move(0, 1); // Liikuta alas
+      break;
+      case 'ArrowLeft':
+      pelaaja.move(-1, 0); // Liikuta vasemmalle
+     break;
+      case 'ArrowRight':
+      pelaaja.move(1, 0); // Liikuta oikealle
+      break;
+      }
+     event.preventDefault(); // Prevent default scrolling behaviour
+     });
 
 function startGame() {
     console.log('Game started');
@@ -27,14 +49,22 @@ function generateRandomBoard(){
    }
 
    generateObstacles(newBoard);
+   
+   
+   [playerX, playerY] = randomEmptyPosition(newBoard);
 
-   newBoard[11][3] = 'P'; //P is player
+   pelaaja = new Player(playerX, playerY);
 
-  return newBoard;
+   newBoard[pelaaja.y][pelaaja.x] = 'P'; //P is player
+
+   return newBoard;
 }
 
 function drawBoard(board) {
     const gameBoard = document.getElementById('game-board');
+
+    gameBoard.innerHTML = '';
+
     // Tämä luo CSS Grid -ruudukon, jossa on BOARD_SIZE saraketta. 
     // Jokainen sarake saa saman leveyden (1fr).
     gameBoard.style.gridTemplateColumns = `repeat(${BOARD_SIZE}, 1fr)`;
@@ -84,7 +114,15 @@ function generateObstacles(board){
     const positions =[
         {startX: 2, startY: 2},
         {startX: 8, startY: 2},
-        {startX: 4, startY: 8}
+        {startX: 4, startY: 8},
+        {startX: 8, startY: 8},
+        {startX: 2, startY: 11},
+        {startX: 8, startY: 11},
+        {startX: 12, startY: 4},
+        {startX: 12, startY: 8},
+        {startX: 12, startY: 11},
+        {startX: 5, startY: 5}
+        
     ]
 
     positions.forEach(pos=>{
@@ -100,7 +138,49 @@ function placeObstacle(board,obstacle,startX, startY){
     }
 }
 
-// Returns a random integer between 5 and 10
+// Returns a random integer between min and max
 function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomEmptyPosition(board) {
+    x = randomInt(1, BOARD_SIZE - 2);
+    y = randomInt(1, BOARD_SIZE - 2);
+    if (getCell(board, x, y) === ' ') {
+        return [x, y];
+    } else {
+        return randomEmptyPosition(board);
+    }
+}
+
+class Player {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    move(dx, dy){
+
+        const currentX = this.x;
+        const currentY = this.y;
+        
+
+       // Laske uusi sijainti
+       // const newX = currentX + deltaX;
+       const newY = currentY + dy;
+       const newX = currentX + dx;
+
+
+    if(board[newY][newX] === ' '){
+        // Päivitä pelaajan sijainti
+        this.x = newX;
+        this.y = newY;
+
+        // Päivitä pelikenttä
+        board[currentY][currentX] = ' '; // Tyhjennetään vanha paikka
+        board[newY][newX] = 'P'; // Asetetaan uusi paikka
+    }
+
+    drawBoard(board);
+    }
+
 }
