@@ -6,6 +6,8 @@ let pelaaja;
 let playerX;
 let playerY;
 
+let ghosts = []; 
+
 document.getElementById('start-button').addEventListener('click', startGame);
 
 document.addEventListener('keydown', (event) => {
@@ -74,6 +76,7 @@ function generateRandomBoard(){
    for(let i = 0; i < 5; i++){
       const[x,y] = randomEmptyPosition(newBoard);
       newBoard[y][x] = 'G';
+      ghosts.push(new Ghost(x,y));
    }
  
 
@@ -193,9 +196,21 @@ function shootAt(x,y){
         return;
     }
 
+    const ghostIndex = ghosts.findIndex(ghost => ghost.x === x && ghost.y === y);
+
+    if(ghostIndex !== -1){
+        ghosts.splice(ghostIndex,1);
+    }
+
     setCell(board, x, y, 'B'); // Asetetaan ammus
     drawBoard(board); 
+
+    if(ghosts.length === 0){
+        alert('Kummitukset voitettu!');
+    }
 }
+
+
 
 class Player {
     constructor(x, y) {
@@ -227,4 +242,18 @@ class Player {
     drawBoard(board);
     }
 
+}
+
+class Ghost{
+    constructor(x,y){
+        this.x = x;
+        this.y = y;
+    }
+
+    moveGhostTowardsPlayer(player,board){
+        let dx = player.x - this.x;
+        let dy = player.y - this.y;
+
+        console.log(dx, dy);
+    }
 }
