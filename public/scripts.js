@@ -47,6 +47,11 @@ function startGame() {
     document.getElementById('intro-screen').style.display = 'none';
     document.getElementById('game-screen').style.display = 'block';
     board = generateRandomBoard();
+
+    setInterval(function() {
+        ghosts[0].moveGhostTowardsPlayer(pelaaja, board);
+    }, 1000);
+
     console.log(board);
     drawBoard(board);
 }
@@ -255,5 +260,32 @@ class Ghost{
         let dy = player.y - this.y;
 
         console.log(dx, dy);
+
+        let moves = [];
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0) moves.push({ x: this.x + 1, y: this.y }); // Move right
+            else moves.push({ x: this.x - 1, y: this.y }); // Move left
+            if (dy > 0) moves.push({ x: this.x, y: this.y + 1 }); // Move down
+            else moves.push({ x: this.x, y: this.y - 1 }); // Move up
+        } else {
+            if (dy > 0) moves.push({ x: this.x, y: this.y + 1 }); // Move down
+            else moves.push({ x: this.x, y: this.y - 1 }); // Move up
+            if (dx > 0) moves.push({ x: this.x + 1, y: this.y }); // Move right
+            else moves.push({ x: this.x - 1, y: this.y }); //  Move left
+        }
+
+        console.log(moves);
+
+        setCell(board, moves[0].x, moves[0].y, 'G'); // haamu liikkuu pelaajan suuntaan
+        setCell(board, this.x, this.y, ' '); // tyhjennetään vanha paikka
+
+        ghosts[0].x = moves[0].x;
+        ghosts[0].y = moves[0].y; // päivitetään haamun sijainti
+
+        drawBoard(board); // Päivitetään pelikenttä
+
+
+
     }
 }
