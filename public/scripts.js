@@ -8,6 +8,8 @@ let playerY;
 
 let ghosts = []; 
 
+let ghostInterval; // Interval for moving ghosts
+
 document.getElementById('start-button').addEventListener('click', startGame);
 
 document.addEventListener('keydown', (event) => {
@@ -48,8 +50,9 @@ function startGame() {
     document.getElementById('game-screen').style.display = 'block';
     board = generateRandomBoard();
 
-    setInterval(function() {
-        ghosts[0].moveGhostTowardsPlayer(pelaaja, board);
+    ghostInterval = setInterval(function() {
+        //ghosts[0].moveGhostTowardsPlayer(pelaaja, board);
+        moveGhosts();
     }, 1000);
 
     console.log(board);
@@ -255,7 +258,7 @@ class Ghost{
         this.y = y;
     }
 
-    moveGhostTowardsPlayer(player,board){
+    moveGhostTowardsPlayer(player,board, oldGhosts){
         let dx = player.x - this.x;
         let dy = player.y - this.y;
 
@@ -277,6 +280,17 @@ class Ghost{
 
         console.log(moves);
 
+        for (let move of moves) {
+            if (board[move.y][move.x] === ' ' || board[move.y][move.x] === 'P' &&
+              !oldGhosts.some(h => h.x === move.x && h.y === move.y)) // Tarkista, ettei haamu liiku toisen haamun päälle) 
+              { 
+                  return move;
+              }
+        }
+        // Jos kaikki pelaajaan päin suunnat ovat esteitä, pysy paikallaan
+        return { x: this.x, y: this.y };
+        
+        /*
         setCell(board, moves[0].x, moves[0].y, 'G'); // haamu liikkuu pelaajan suuntaan
         setCell(board, this.x, this.y, ' '); // tyhjennetään vanha paikka
 
@@ -284,8 +298,59 @@ class Ghost{
         ghosts[0].y = moves[0].y; // päivitetään haamun sijainti
 
         drawBoard(board); // Päivitetään pelikenttä
+        
+        */
 
 
 
     }
 }
+
+
+function moveGhosts() {
+
+    // Säilytä haamujen vanhat paikat
+    const oldGhosts = ghosts.map(ghost => ({ x: ghost.x, y: ghost.y }));
+    
+      ghosts.forEach(ghost => {
+        
+        const newPosition = ghost.moveGhostTowardsPlayer(pelaaja, board, oldGhosts);
+          
+          ghost.x = newPosition.x;
+          ghost.y = newPosition.y;
+        
+          setCell(board, ghost.x, ghost.y, 'G');
+    
+          // Check if ghost touches the player
+          if (ghost.x === pelaaja.x && ghost.y === pelaaja.y) {
+              endGame() // End the game
+          return;
+          }
+    
+          });
+    
+        // Tyhjennä vanhat haamujen paikat laudalta
+        oldGhosts.forEach(ghost => {
+          board[ghost.y][ghost.x] = ' '; // Clear old ghost position
+        });
+    
+        // Update the board with new ghost positions
+        ghosts.forEach(ghost => {
+            board[ghost.y][ghost.x] = 'G';
+        });
+    
+    // Redraw the board to reflect ghost movement
+    drawBoard(board);
+    }
+
+    function endGame() {
+        isGameRunning = false; // Set the game as game over
+        alert('Game Over! The ghost caught you!');
+         // Show intro-view ja hide game-view
+        ghosts = []; // Tyhjennetään haamut
+        clearInterval(ghostInterval);
+        document.getElementById('intro-screen').style.display = 'block';
+        document.getElementById('game-screen').style.display = 'none';
+        
+      
+      }
